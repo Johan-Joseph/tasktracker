@@ -51,7 +51,17 @@ const MyTasks = ({ userId }) => {
           <ul className="list-group">
             {tasks.map(task => (
               <li key={task._id} className="list-group-item">
-                <strong>{task.title}</strong> {task.project?.title && `(${task.project.title})`}<br />
+                <div className="d-flex justify-content-between align-items-start mb-2">
+                  <strong>{task.title}</strong>
+                  <span className={`badge ${
+                    task.priority === 'Critical' ? 'bg-danger' :
+                    task.priority === 'High' ? 'bg-warning' :
+                    task.priority === 'Medium' ? 'bg-info' : 'bg-secondary'
+                  }`}>
+                    {task.priority}
+                  </span>
+                </div>
+                {task.project?.title && <small className="text-muted">Project: {task.project.title}</small>}<br />
                 Due: {task.dueDate?.slice(0, 10)}<br />
 
                 <label className="form-label mt-2">Status</label>

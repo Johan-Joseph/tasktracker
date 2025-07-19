@@ -34,6 +34,7 @@ const taskRoutes = require('./routes/tasks');
 const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/uploadRoutes');
 const messageRoutes = require('./routes/messageRoutes'); // ✅ only once
+const { router: notificationRoutes } = require('./routes/notifications');
 
 // ✅ Use Routes
 app.use('/api/projects', projectRoutes);
@@ -43,6 +44,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/messages', messageRoutes); // ✅ used once
+app.use('/api/notifications', notificationRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

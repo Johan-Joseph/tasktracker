@@ -19,6 +19,9 @@ import TaskAnalytics from './components/TaskAnalytics';
 import AllUploads from './components/AllUploads';
 import MemberHome from './components/MemberHome';
 import TaskProgressPage from './components/TaskProgressPage';
+import KanbanBoard from './components/KanbanBoard';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -129,6 +132,10 @@ function App() {
             element={isAdminOrPM? <TaskCalendar /> : <Navigate to="/login" />}
           />
 
+          <Route
+            path="/kanban"
+            element={isAdminOrPM? <KanbanBoard /> : <Navigate to="/login" />}
+          />
           {/* ✅ Dashboard Route Based on Role */}
           <Route
             path="/dashboard"
@@ -154,6 +161,18 @@ function App() {
           />
         </Routes>
       </div>
+      
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 }

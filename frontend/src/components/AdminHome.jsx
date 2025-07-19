@@ -150,6 +150,20 @@ const AdminHome = () => {
           <Card
             className="shadow-lg border-0 h-100"
             style={{ cursor: 'pointer' }}
+            onClick={() => navigate('/kanban')}
+          >
+            <Card.Img variant="top" src={analytics} style={{ objectFit: 'cover', height: '220px' }} />
+            <Card.Body className="text-center">
+              <Card.Title className="fs-4">Kanban Board</Card.Title>
+              <h2 className="text-primary fw-bold">📋</h2>
+              <Card.Text>Drag and drop task management.</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card
+            className="shadow-lg border-0 h-100"
+            style={{ cursor: 'pointer' }}
             onClick={() => navigate('/uploads')}
           >
             <Card.Img variant="top" src={img6} style={{ objectFit: 'cover', height: '220px' }} />

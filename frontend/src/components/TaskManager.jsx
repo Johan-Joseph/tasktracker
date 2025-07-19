@@ -6,6 +6,7 @@ const TaskManager = () => {
     title: '',
     description: '',
     dueDate: '',
+    priority: 'Medium',
     assignedTo: '',
     project: ''
   });
@@ -37,7 +38,7 @@ const TaskManager = () => {
   const handleSubmit = async () => {
     try {
       await axios.post('http://localhost:4000/api/tasks', form);
-      setForm({ title: '', description: '', dueDate: '', assignedTo: '', project: '' });
+      setForm({ title: '', description: '', dueDate: '', priority: 'Medium', assignedTo: '', project: '' });
       fetchAll();
     } catch (err) {
       console.error('Error assigning task:', err);
@@ -90,6 +91,16 @@ const TaskManager = () => {
 
           <select
             className="form-select mb-2"
+            value={form.priority}
+            onChange={(e) => setForm({ ...form, priority: e.target.value })}
+          >
+            <option value="Low">Low Priority</option>
+            <option value="Medium">Medium Priority</option>
+            <option value="High">High Priority</option>
+            <option value="Critical">Critical Priority</option>
+          </select>
+          <select
+            className="form-select mb-2"
             value={form.assignedTo}
             onChange={(e) => setForm({ ...form, assignedTo: e.target.value })}
           >
@@ -128,7 +139,14 @@ const TaskManager = () => {
                 className="list-group-item d-flex justify-content-between align-items-center"
               >
                 <div>
-                  <strong>{t.title}</strong> – <em>{t.status || 'To Do'}</em><br />
+                  <strong>{t.title}</strong> – <em>{t.status || 'To Do'}</em>
+                  <span className={`badge ms-2 ${
+                    t.priority === 'Critical' ? 'bg-danger' :
+                    t.priority === 'High' ? 'bg-warning' :
+                    t.priority === 'Medium' ? 'bg-info' : 'bg-secondary'
+                  }`}>
+                    {t.priority}
+                  </span><br />
                   <small>Project: {getProjectTitle(t.project)}</small><br />
                   <small>Assigned To: {getMemberName(t.assignedTo)}</small>
                 </div>

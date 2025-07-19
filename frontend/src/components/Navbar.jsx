@@ -13,6 +13,7 @@ import {
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import logoimg from '../assets/image1.png';
+import NotificationCenter from './NotificationCenter';
 
 const AppNavbar = ({ onLogout, user }) => {
   const navigate = useNavigate();
@@ -86,8 +87,18 @@ const AppNavbar = ({ onLogout, user }) => {
   </Nav.Link>
 
   <Nav.Link onClick={() => navigate('/dashboard')}>Dashboard</Nav.Link>
+  
+  {(user?.role === 'admin' || user?.role === 'project_manager') && (
+    <Nav.Link onClick={() => navigate('/kanban')}>Kanban Board</Nav.Link>
+  )}
 </Nav>
 
+            {/* Notifications */}
+            {user && (
+              <div className="me-3">
+                <NotificationCenter userId={user._id} />
+              </div>
+            )}
 
             {/* User Dropdown */}
             <Nav>
