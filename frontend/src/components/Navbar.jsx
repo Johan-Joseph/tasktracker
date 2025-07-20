@@ -14,7 +14,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import logoimg from '../assets/image1.png';
 import NotificationCenter from './NotificationCenter';
-import React from 'react';
 
 const AppNavbar = ({ onLogout, user }) => {
   const navigate = useNavigate();
