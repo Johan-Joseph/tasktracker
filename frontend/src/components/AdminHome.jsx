@@ -154,9 +154,9 @@ const AdminHome = () => {
           >
             <Card.Img variant="top" src={analytics} style={{ objectFit: 'cover', height: '220px' }} />
             <Card.Body className="text-center">
-              <Card.Title className="fs-4">Kanban Board</Card.Title>
+              <Card.Title className="fs-4">Board</Card.Title>
               <h2 className="text-primary fw-bold">📋</h2>
-              <Card.Text>Drag and drop task management.</Card.Text>
+              <Card.Text>Task management board view.</Card.Text>
             </Card.Body>
           </Card>
         </Col>

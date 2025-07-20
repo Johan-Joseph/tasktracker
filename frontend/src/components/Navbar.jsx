@@ -90,7 +90,7 @@ const AppNavbar = ({ onLogout, user }) => {
   <Nav.Link onClick={() => navigate('/dashboard')}>Dashboard</Nav.Link>
   
   {(user?.role === 'admin' || user?.role === 'project_manager') && (
-    <Nav.Link onClick={() => navigate('/kanban')}>Kanban Board</Nav.Link>
+    <Nav.Link onClick={() => navigate('/kanban')}>Board</Nav.Link>
   )}
 </Nav>
 

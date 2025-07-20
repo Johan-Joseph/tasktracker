@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Badge, Button, Modal, Form } from 'react-bootstrap';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -27,39 +26,6 @@ const KanbanBoard = () => {
     }
   };
 
-  const onDragEnd = async (result) => {
-    const { destination, source, draggableId } = result;
-
-    if (!destination) return;
-
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      return;
-    }
-
-    const newStatus = destination.droppableId;
-    
-    try {
-      await axios.put(`http://localhost:4000/api/tasks/${draggableId}`, {
-        status: newStatus
-      });
-      
-      // Update local state
-      const newKanbanData = { ...kanbanData };
-      const sourceColumn = newKanbanData[source.droppableId];
-      const destColumn = newKanbanData[destination.droppableId];
-      
-      const [movedTask] = sourceColumn.splice(source.index, 1);
-      movedTask.status = newStatus;
-      destColumn.splice(destination.index, 0, movedTask);
-      
-      setKanbanData(newKanbanData);
-      toast.success('Task status updated successfully');
-    } catch (err) {
-      console.error('Error updating task status:', err);
-      toast.error('Failed to update task status');
-    }
-  };
-
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'Critical': return 'danger';
@@ -81,84 +47,64 @@ const KanbanBoard = () => {
   };
 
   const TaskCard = ({ task, index }) => (
-    <Draggable draggableId={task._id} index={index}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className="mb-3"
-        >
-          <Card 
-            className={`shadow-sm ${snapshot.isDragging ? 'shadow-lg' : ''}`}
-            style={{ 
-              cursor: 'grab',
-              transform: snapshot.isDragging ? 'rotate(5deg)' : 'none',
-              border: isOverdue(task.dueDate) ? '2px solid #dc3545' : '1px solid #dee2e6'
-            }}
-            onClick={() => {
-              setSelectedTask(task);
-              setShowModal(true);
-            }}
-          >
-            <Card.Body className="p-3">
-              <div className="d-flex justify-content-between align-items-start mb-2">
-                <Card.Title className="h6 mb-0">{task.title}</Card.Title>
-                <Badge bg={getPriorityColor(task.priority)} className="ms-2">
-                  {task.priority}
-                </Badge>
-              </div>
-              
-              {task.description && (
-                <Card.Text className="small text-muted mb-2" style={{ fontSize: '0.85rem' }}>
-                  {task.description.length > 60 
-                    ? `${task.description.substring(0, 60)}...` 
-                    : task.description}
-                </Card.Text>
-              )}
-              
-              <div className="d-flex justify-content-between align-items-center">
-                <small className="text-muted">
-                  {task.assignedTo?.name || 'Unassigned'}
-                </small>
-                <small className={`${isOverdue(task.dueDate) ? 'text-danger fw-bold' : 'text-muted'}`}>
-                  {formatDate(task.dueDate)}
-                </small>
-              </div>
-              
-              {task.project?.title && (
-                <Badge bg="light" text="dark" className="mt-2">
-                  {task.project.title}
-                </Badge>
-              )}
-            </Card.Body>
-          </Card>
-        </div>
-      )}
-    </Draggable>
+    <div className="mb-3">
+      <Card 
+        className="shadow-sm"
+        style={{ 
+          cursor: 'pointer',
+          border: isOverdue(task.dueDate) ? '2px solid #dc3545' : '1px solid #dee2e6'
+        }}
+        onClick={() => {
+          setSelectedTask(task);
+          setShowModal(true);
+        }}
+      >
+        <Card.Body className="p-3">
+          <div className="d-flex justify-content-between align-items-start mb-2">
+            <Card.Title className="h6 mb-0">{task.title}</Card.Title>
+            <Badge bg={getPriorityColor(task.priority)} className="ms-2">
+              {task.priority}
+            </Badge>
+          </div>
+          
+          {task.description && (
+            <Card.Text className="small text-muted mb-2" style={{ fontSize: '0.85rem' }}>
+              {task.description.length > 60 
+                ? `${task.description.substring(0, 60)}...` 
+                : task.description}
+            </Card.Text>
+          )}
+          
+          <div className="d-flex justify-content-between align-items-center">
+            <small className="text-muted">
+              {task.assignedTo?.name || 'Unassigned'}
+            </small>
+            <small className={`${isOverdue(task.dueDate) ? 'text-danger fw-bold' : 'text-muted'}`}>
+              {formatDate(task.dueDate)}
+            </small>
+          </div>
+          
+          {task.project?.title && (
+            <Badge bg="light" text="dark" className="mt-2">
+              {task.project.title}
+            </Badge>
+          )}
+        </Card.Body>
+      </Card>
+    </div>
   );
 
-  const Column = ({ title, tasks, droppableId }) => (
+  const Column = ({ title, tasks }) => (
     <div className="col-md-4 mb-4">
       <Card className="h-100">
         <Card.Header className="bg-primary text-white text-center">
           <h5 className="mb-0">{title} ({tasks.length})</h5>
         </Card.Header>
-        <Droppable droppableId={droppableId}>
-          {(provided, snapshot) => (
-            <Card.Body
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className={`${snapshot.isDraggingOver ? 'bg-light' : ''}`}
-              style={{ minHeight: '500px' }}
-            >
-              {tasks.map((task, index) => (
-                <TaskCard key={task._id} task={task} index={index} />
-              ))}
-              {provided.placeholder}
-            </Card.Body>
-          )}
-        </Droppable>
+        <Card.Body style={{ minHeight: '500px' }}>
+          {tasks.map((task, index) => (
+            <TaskCard key={task._id} task={task} index={index} />
+          ))}
+        </Card.Body>
       </Card>
     </div>
   );
@@ -166,19 +112,17 @@ const KanbanBoard = () => {
   return (
     <div className="container-fluid mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3 className="text-primary">📋 Kanban Board</h3>
+        <h3 className="text-primary">📋 Board</h3>
         <Button variant="outline-primary" onClick={fetchKanbanData}>
           🔄 Refresh
         </Button>
       </div>
 
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="row">
-          <Column title="To Do" tasks={kanbanData['To Do']} droppableId="To Do" />
-          <Column title="In Progress" tasks={kanbanData['In Progress']} droppableId="In Progress" />
-          <Column title="Done" tasks={kanbanData['Done']} droppableId="Done" />
-        </div>
-      </DragDropContext>
+      <div className="row">
+        <Column title="To Do" tasks={kanbanData['To Do']} />
+        <Column title="In Progress" tasks={kanbanData['In Progress']} />
+        <Column title="Done" tasks={kanbanData['Done']} />
+      </div>
 
       {/* Task Detail Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
